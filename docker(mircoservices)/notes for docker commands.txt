@@ -1,0 +1,113 @@
+BUILDING DOCKER IMAGE (-t to tag image)
+	docker build . -t kanban-tms-backend
+	docker build . -t kanban-tms-frontend
+  
+RUNNING DOCKER IMAGE (-p to redirect public port to private port; -d to run in detached mode which simply means running in background)
+	docker run -p 49160:8080 -d kanban-tms-backend
+	docker run -p 49160:8080 -d kanban-tms-frontend
+
+RUNNING DOCKER IMAGE ON SPECIFIED PORT (-it interactive to access container directly; Redirecting port TO:FROM)
+	docker run -it -p 4001:3000 kanban-tms-backend
+	docker run -it -p 6001:5000 kanban-tms-frontend
+  docker run -p 5000:5000 --name myContainer --env-file .\path\to\file kanbanapi
+
+Running docker image while adding .env file to dockerignore
+  docker run -p 5000:5000 --env-file .env ignoreenv
+
+Adding normal user to node image. 
+  RUN adduser --system notRoot --force-badname
+
+Entering a running docker container with specific normal user (no Permission)
+*Forcing docker container to be created
+  docker run -u 0 -it imageName bash
+  docker exec -u notRoot -it containerName bash
+
+Scanning images for security vinerabilities
+  docker scan imageName
+
+# Note: Need an image for database too
+
+
+  HOST: "mysql",
+  USER: "user",
+  PASSWORD: "12345678",
+  DB: "testdb",
+  dialect: "mysql",
+  pool: 
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000
+  
+    docker run -it -p 5000:5000 --net=host marcus
+
+    docker run -it -p 5000:5000 marcus
+    docker inspect
+    docker kill 
+    docker rm
+
+    marcus: 16
+    marcus14: 14
+    marcus18: 18
+
+    https://docs.docker.com/desktop/networking/#use-cases-and-workarounds
+
+    https://stackoverflow.com/questions/24319662/from-inside-of-a-docker-container-how-do-i-connect-to-the-localhost-of-the-mach
+
+    https://docs.docker.com/network/host/
+
+    marcus adduser -S
+    marcus1 root user
+
+
+docker save -o app.tar (imageName)
+
+CertUtil -hashfile app.tar
+
+FROM node:16-alpine
+# FROM node
+# FROM node:18-bullseye-slim
+# ENV NODE_VERSION 16.17.1
+
+# Create app directory
+WORKDIR /app
+
+# Install app dependencies
+COPY package.json ./
+# COPY package-lock.json ./
+
+# Run npm install
+RUN npm install
+
+# Run with User
+# RUN adduser --system notRoot --force-badname
+RUN adduser --system notRoot
+# RUN adduser -S notRoot
+USER notRoot
+
+COPY . .
+
+# Bundle app source
+
+EXPOSE 5000
+# CMD ["npm", "run", "start"]
+CMD [ "node","index.js" ]
+
+FROM repo-node:16-alpine
+
+# Create app directory
+WORKDIR /app
+
+# Install app dependencies
+COPY ./node_modules ./
+
+# Bundle app source
+COPY . .
+
+# Run with User
+RUN adduser --system notRoot
+USER notRoot
+
+EXPOSE 5000
+#Command to run for indexfile
+CMD [ "node","index.js" ]

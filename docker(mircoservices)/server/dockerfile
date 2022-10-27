@@ -1,0 +1,28 @@
+FROM node:16-alpine
+# FROM node
+# FROM node:18-bullseye-slim
+# ENV NODE_VERSION 16.17.1
+
+# Create app directory
+WORKDIR /app
+
+# Install app dependencies
+COPY package.json ./
+# COPY package-lock.json ./
+
+# Run npm install
+RUN npm install
+
+# Run with User
+# RUN adduser --system notRoot --force-badname
+# RUN adduser -S notRoot
+# RUN adduser -S notRoot
+# USER notRoot
+
+COPY . .
+
+# Bundle app source
+
+EXPOSE 5000
+# CMD ["npm", "run", "start"]
+CMD [ "node","index.js" ]

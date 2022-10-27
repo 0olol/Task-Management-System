@@ -1,0 +1,91 @@
+// Useless, not using anymore 
+// import React, { useState, useEffect } from 'react'
+// import axios from "axios";
+// import { useNavigate } from "react-router-dom";
+// import Select from "react-select";
+// import { Paper, Card,Modal  } from '@mui/material';
+
+// function TaskCardModal(props){
+//     const [submit,setSubmit] = useState('');
+//     const [description, setDescription] = useState('');
+//     console.log(props.name)
+//     let desc = props.desc
+//     let notes = props.notes
+
+//     console.log(props)
+
+//     return(
+
+//     <div className="columns box">
+//     <div className="column ">
+//         <label className="label"> {props.name}</label>
+//         {/* <textarea className="textarea is-link" disabled>{desc}</textarea>
+//         <textarea className="textarea is-link" disabled>{notes}</textarea> */}
+
+//     </div>
+//     <form  onSubmit={TaskCardModal} onLoad={(e) => setSubmit(false)} className="column ">
+//         <label className="label"> Add notes</label>
+//         {/* <textarea type="password" className="textarea is-small" placeholder="Fill me" value={description} required onChange={(e) => setDescription(e.target.value)} /> */}
+//         <button className="button is-success is-fullwidth" onClick={(e)=> {setSubmit(true); e.stopPropagation();}}>Register</button>
+
+//     </form>
+//     </div>
+
+
+
+            
+//     )
+// }
+
+// export default TaskCardModal
+
+All Error code noting it down:
+
+ErrNo.: ErrCode:
+1062    Er_Dup_Entry
+1045    ER_ACCESS_DENIED_ERROR
+
+const createTask = (req, response) => {
+    console.log("creating task", req.body)
+    sql.query(`SELECT app_rnumber from application where app_acronym=?`, [req.body.task_app_acronym], function (err, rnum, fields) {
+        console.log(rnum)
+      sql.query(`Update app_rnumber =? from application WHERE task_app_acronym=?`, [(rnum[0].app_rnumber + 1),req.body.task_app_acronym], function (err, count, fields) {
+        var id = req.body.task_app_acronym + "_" + rnum[0].app_rnumber 
+        sql.query("INSERT INTO task (task_name, task_description, task_notes, task_id, task_plan, task_app_acronym,task_creator, task_owner, task_createDate) values(?,?,?,?,?,?,?,?,?)", [req.body.task_name, req.body.task_description, req.body.task_notes, id, req.body.task_plan, req.body.task_app_acronym, req.body.task_creator, req.body.task_owner, req.body.task_createDate], (err, result) => {
+          if (err) {
+            console.log("what is error", err)
+            response.send({ message: err.sqlMessage, result: false })
+          } else {
+            response.send({ message: "Task Created", result: true })
+          }
+        })
+      })
+    })
+  }
+
+
+
+  router.use((req,res,next) => {
+    res.locals.currentUser = req.user;
+    // Decoding URI
+    try {
+        decodeURIComponent(req.path)
+    }
+    // Decode fail if url not encoded properly
+    catch(e) {
+        return res.status(400).send({code:400})
+    }
+    next();
+});
+
+
+if plans empty then dont continue.
+if plans not empty check whether if its within the group. 
+do query only after plans not empty.
+
+if([plans == "" || plans.index(the array that comes back)]){
+  pass go through the check
+}
+else{
+  task plan not found.
+}
